@@ -1,13 +1,11 @@
 var http = require('http');
 var fs = require('fs');
 var wss = require('./websockets-server');
-/*---------------Silver Challenge-------*/
 var mime = require('mime');
-/*---------------Silver Challenge-------*/
 
 var handleError = function(err, res) {
-  fs.readFile('./app/error.html', function(err, data) {
-    res.end(data);
+  fs.readFile('./app/error.html', function(err, my) {
+    res.end(my);
   });
 };
 
@@ -24,9 +22,18 @@ var static = require('diet-static')({
 
 // Attach the static module as a footer middleware
 app.footer(static);
+app.get('/',function($){
+  $.redirect('index.html');
+});
 
-// This is a working static file server
-// anything you put in ../yourProject/static/
-// will be served as a file when requested
-// for example: to load an image from "../~yourProject/static/cat.png"
-// you can send a GET request to "http://localhost/cat.png"
+app.missing(function($){
+  $.header('Content-Type', 'html/text');
+  $.status('404','Page not found');
+  fs.readFile(__direname+'/app/error.html',function(error,data){
+    if(error){
+      console.trace('Ohhh it is error here please check it', $.status,$.error.message);
+    }
+    $.end(my.toString());
+
+  });
+});
